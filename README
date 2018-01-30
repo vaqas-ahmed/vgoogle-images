@@ -8,3 +8,9 @@ Requirements:
 python
 selenium
 webdriver(any according to your os)
+
+
+Usage:
+
+#keys = [''] #list of all keyswords
+#run the script
