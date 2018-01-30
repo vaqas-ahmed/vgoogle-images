@@ -1,0 +1,10 @@
+Introduction :
+
+vgoogle-images download google images in bulk by using selenium and python
+
+
+Requirements:
+
+python
+selenium
+webdriver(any according to your os)
