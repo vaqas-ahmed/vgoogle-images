@@ -1,0 +1,58 @@
+
+# Libraries needed
+from selenium import webdriver as wd
+from selenium.webdriver.common.keys import Keys
+import time,re,shutil,requests as req
+
+#Downlaod directory (add \ or / at the last depending on os)
+downndir = r'/home/me/Desktop/'
+
+#Download images for keywords (add more keywrods if you want)
+keys = ['pizza']
+
+#initialize Browser instance
+#use any webdriver , i prefer to use phantomjs for silent working
+br = wd.Chrome()
+
+
+#Scrape the urls
+def scrape(q):
+  br.get('https://www.google.co.in/search?q=%s&safe=active&source=lnms&tbm=isch'%q)
+  for i in range(6):
+      br.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+      time.sleep(3)
+
+  imgs = []
+  for l in br.find_elements_by_tag_name('a'):
+      if(l.get_attribute('jsname')!=None):
+          s=l.get_attribute('href')
+          s1 = re.findall('imgurl=.*\&imgrefurl',s)[0]
+          ur = s1[7:-10]
+          ur = ur.replace('%2F','/').replace('%3A',':').replace('%3D','=').replace('%3F','?')
+          print(ur)
+          imgs.append(ur)
+
+  return(imgs)
+
+#Download the images from returned urls
+def downlaod(imgs):
+  print('downloading')
+  for i in range(len(imgs)):
+      print(imgs[i])
+      ext = imgs[i].split('.')[-1]
+      if(len(ext)<5):
+          pass
+      else:
+          ext = 'jpg'
+      try:
+          r = req.get(imgs[i],stream=True)
+          with open('{}{}.{}'.format(downndir,i,ext), 'wb') as out_file:
+              shutil.copyfileobj(r.raw, out_file)
+      except:
+          print('error')
+
+#Loop in keywords
+for q in keys:
+  urls = scrape(q)
+  download(urls)
+  print('downloaded all for %s' %q)
